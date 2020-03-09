@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Yekaterinburg',
 
     /*
     |--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'ru',
 
     /*
     |--------------------------------------------------------------------------
@@ -106,7 +106,7 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+    'faker_locale' => 'ru_RU',
 
     /*
     |--------------------------------------------------------------------------
@@ -229,4 +229,9 @@ return [
 
     ],
 
+    // Данные для Google Captcha
+    'google_recaptcha' => [
+        'key' => env('GOOGLE_RECAPTCHA_KEY', ""),
+        'secret' => env('GOOGLE_RECAPTCHA_SECRET', "")
+    ],
 ];

@@ -44,7 +44,13 @@
 
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
-                    <!-- Authentication Links -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('add-entry') }}">
+                            Добавить запись
+                        </a>
+                    </li>
+                <!-- Authentication Links -->
+                @if(false)
                     @guest
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">
@@ -70,6 +76,7 @@
                             </div>
                         </li>
                     @endguest
+                @endif
                 </ul>
             </div>
         </div>
