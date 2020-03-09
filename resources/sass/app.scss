@@ -1,1 +1,8 @@
-//
+// Собираем стили Bootswatch
+
+// Переменные
+@import "variables";
+// Стили Bootstrap
+@import "~bootstrap/scss/bootstrap";
+// Стили Bootswatch
+@import "bootswatch";
