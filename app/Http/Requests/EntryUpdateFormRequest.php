@@ -6,10 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * Класс, представляющий запрос на добавление записи.
+ * Класс, представляющий запрос на обновление записи.
  * @package App\Http\Requests Запросы приложения.
  */
-class EntryFormRequest extends FormRequest
+class EntryUpdateFormRequest extends FormRequest
 {
     /**
      * Определяет, может ли пользователь выполнять этот запрос.
@@ -18,8 +18,8 @@ class EntryFormRequest extends FormRequest
      */
     public function authorize()
     {
-        // Выполнять запрос может любой пользователь
-        return true;
+        // Выполнять запрос может только авторизованный пользователь
+        return Auth::check();
     }
 
     /**
@@ -29,22 +29,15 @@ class EntryFormRequest extends FormRequest
      */
     public function rules()
     {
-        // Общие правила валидации
-        $rules = [
+        return [
             // Текст записи
             'content' => 'required',
             // Прикрепленные картинки
             'images' => 'nullable|array',
-            'images.*' => 'image'
+            'images.*' => 'image',
+            // Изображения, подлежащие удалению
+            'removed_images' => 'nullable|array',
+            'removed_images.*' => 'exists:entry_images,id'
         ];
-        // Если пользователь не авторизован
-        if(!Auth::check()) {
-            // Нужно заполнить автора
-            $rules['author'] = 'required';
-            // И ответ капчи
-            $rules['g-recaptcha-response'] = 'required';
-        }
-        // Возвращаем правила
-        return $rules;
     }
 }

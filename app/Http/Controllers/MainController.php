@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Components\Helpers\CaptchaHelper;
 use App\Http\Requests\EntryFormRequest;
 use App\Models\Entry;
-use GuzzleHttp\Client;
+use App\Models\EntryImage;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /**
  * Класс, представляющий основной контроллер приложения.
@@ -12,6 +16,8 @@ use GuzzleHttp\Client;
  */
 class MainController extends Controller
 {
+    use CaptchaHelper;
+
     /**
      * Отображает список записей в гостевой книге.
      *
@@ -19,8 +25,19 @@ class MainController extends Controller
      */
     public function index()
     {
+        // Устанавливаем количество выбираемых записей по-умолчанию
+        $count = config('app.default_rows_count');
+        // Если пользователь авторизован
+        if(Auth::check()) {
+            /** @var \App\User $user */
+            $user = Auth::user();
+            // Если заполнено количество строк - устанавливаем его
+            if (filled($user->rows_count)) {
+                $count = $user->rows_count;
+            }
+        }
         // Получаем список записей с постраничной разбивкой
-        $entries = Entry::paginate(10);
+        $entries = Entry::with('images')->orderBy('id', 'desc')->paginate($count);
         // Возвращаем представление
         return view('main.index', [
             'entries' => $entries
@@ -38,59 +55,77 @@ class MainController extends Controller
     }
 
     /**
-     * Сохраняет запись в БД.
+     * Обрабатывает сохранение записи в БД.
      *
      * @param EntryFormRequest $request запрос на добавление записи.
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException исключение если файл изображения не найден.
      */
     public function saveEntry(EntryFormRequest $request)
     {
-        if($this->verifyCaptcha($request->get('g-recaptcha-response'))) {
-            $entry = new Entry([
-                'author' => $request->get('author'),
-                'content' => $request->get('content')
-            ]);
-            $entry->save();
-            // Генерируем алерт
-            $alert = [
-                'type' => 'success',
-                'text' => 'Ваша запись успешно добавлена'
-            ];
+        // Если пользователь авторизован - просто сохраняем статью
+        if(Auth::check()) {
+            // Сохраняем запись в БД
+            $alert = $this->storeEntry($request);
         } else {
-            // Иначе указываем что есть проблемы
-            $alert = [
-                'type' => 'danger',
-                'text' => 'Подтвердите, что вы не робот!'
-            ];
+            // Если пользователь не авторизован - надо добавить капчу
+            if($this->verifyCaptcha($request->get('g-recaptcha-response'))) {
+                // Сохраняем запись в БД если капча успешно пройдена
+                $alert = $this->storeEntry($request);
+            } else {
+                // Иначе указываем что есть проблемы
+                $alert = [
+                    'type' => 'danger',
+                    'text' => 'Подтвердите, что вы не робот!'
+                ];
+            }
         }
+        // TODO: Добавить уведомления о новых записях
         // Возвращаем редирект на главную с уведомлением
         return redirect()->route('home')->with('alert', $alert);
     }
 
     /**
-     * Проверяет ответ Google captcha.
+     * Сохраняет запись в БД.
      *
-     * @param string $response ответ google captcha.
-     * @return bool флаг успешности проверки.
+     * @param EntryFormRequest $request запрос на добавление записи.
+     * @return array массив с данными для уведомления об успешном сохранении записи.
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException исключение если файл изображения не найден.
      */
-    private function verifyCaptcha(string $response)
+    private function storeEntry(EntryFormRequest $request)
     {
-        // Заводим клиент Guzzle
-        $client = new Client();
-        // Делаем запрос
-        $result = $client->post('https://www.google.com/recaptcha/api/siteverify', [
-            'form_params' => [
-                'secret' => config('app.google_recaptcha.secret'),
-                'response' => $response
-            ]
-        ]);
-        // Если ответ не успешен, возвращаем ложь
-        if($result->getStatusCode() !== 200) {
-            return false;
+        $data = [
+            'author' => $request->get('author'),
+            'content' => $request->get('content')
+        ];
+
+        if(Auth::check()) {
+            /** @var \App\User $user */
+            $user = Auth::user();
+            $data['user_id'] = $user->id;
+            $data['author'] = $user->name;
         }
-        // Получаем контент ответа и декодируем его из JSON
-        $content = json_decode($result->getBody()->getContents());
-        // Возвращаем статус проверки
-        return $content->success;
+
+        $entry = new Entry($data);
+        $entry->save();
+
+        if($request->hasFile('images')) {
+            /** @var UploadedFile $image */
+            foreach ($request->file('images') as $image) {
+                $newImage = new EntryImage([
+                    'entry_id' => $entry->id,
+                    'name' => Str::random(),
+                    'original_name' => $image->getClientOriginalName(),
+                    'extension' => $image->getClientOriginalExtension()
+                ]);
+                $newImage->save();
+                $newImage->saveInFileSystem($image);
+            }
+        }
+
+        return [
+            'type' => 'success',
+            'text' => 'Ваша запись успешно добавлена'
+        ];
     }
 }

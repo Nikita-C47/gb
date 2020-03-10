@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 
+window.bsCustomFileInput = require('bs-custom-file-input');
+
 window.Vue = require('vue');
 
 /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Components\Helpers\CaptchaHelper;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\User;
@@ -22,14 +23,14 @@ class RegisterController extends Controller
     |
     */
 
-    use RegistersUsers;
+    use RegistersUsers, CaptchaHelper;
 
     /**
      * Where to redirect users after registration.
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = "/";
 
     /**
      * Create a new controller instance.
@@ -53,6 +54,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'g-recaptcha-response' => ['required'],
         ]);
     }
 
@@ -64,6 +66,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        if(!$this->verifyCaptcha($data['g-recaptcha-response'])) {
+            return redirect()->route('home')->with('alert', [
+                'type' => 'danger',
+                'text' => 'Вы должны подтвердить что Вы не робот!'
+            ]);
+        }
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

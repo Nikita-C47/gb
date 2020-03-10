@@ -24,7 +24,10 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-        //
+        // Шлюз для проверки доступа пользователя к записи
+        Gate::define('entry', function ($user, $entry) {
+            // Работать с записью может только пользователь, создавший ее
+            return $user->id === $entry->user_id;
+        });
     }
 }

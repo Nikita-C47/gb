@@ -234,4 +234,8 @@ return [
         'key' => env('GOOGLE_RECAPTCHA_KEY', ""),
         'secret' => env('GOOGLE_RECAPTCHA_SECRET', "")
     ],
+    // Количество выводимых записей по-умолчанию
+    'default_rows_count' => 10,
+    'enable_notifications' => env('ENABLE_NOTIFICATIONS', false),
+    'admin_email' => env('ADMIN_EMAIL', "")
 ];

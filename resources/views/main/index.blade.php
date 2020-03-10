@@ -13,11 +13,19 @@
                     <p class="card-text">
                         {{ $entry->content }}
                     </p>
+                    @if(count($entry->images) > 0)
+                    <span class="text-primary">Прикрепленные изображения:</span>
+                    <div class="d-lg-flex d-xl-flex align-items-end">
+                        @foreach($entry->images as $image)
+                            <a class="mr-1" href="{{ $image->link }}" data-lightbox="images-{{ $entry->id }}" data-title="{{ $image->original_name }}">
+                                <img src="{{ $image->thumbnail_link }}" alt="{{ $image->original_name }}"/>
+                            </a>
+                        @endforeach
+                    </div>
+                    @endif
                 </div>
                 <div class="card-footer text-muted">
-                    <div class="float-left">
-                        {{ $entry->author }}, {{ $entry->created_at->diffForHumans() }}
-                    </div>
+                    {{ $entry->author }}, {{ $entry->updated_at->diffForHumans() }}
                 </div>
             </div>
         @endforeach

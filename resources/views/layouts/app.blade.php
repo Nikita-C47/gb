@@ -20,7 +20,7 @@
     <meta name="theme-color" content="#2780e3">
     <meta property="og:title" content="@yield('title') - {{ config('app.name', 'Laravel') }}">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="{{ asset('img/logo/logo-bordered-md.png') }}">
+    <meta property="og:image" content="{{ asset('images/logo/logo-bordered-md.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:description" content="{{ config('app.name', 'Laravel') }}">
     <meta property="og:locale" content="{{ app()->getLocale() }}">
@@ -50,7 +50,6 @@
                         </a>
                     </li>
                 <!-- Authentication Links -->
-                @if(false)
                     @guest
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">
@@ -70,13 +69,19 @@
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('my-entries') }}">
+                                    Мои записи
+                                </a>
+                                <a class="dropdown-item" href="{{ route('edit-profile') }}">
+                                    Профиль
+                                </a>
+                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{{ route('logout-get') }}">
                                     Выйти
                                 </a>
                             </div>
                         </li>
                     @endguest
-                @endif
                 </ul>
             </div>
         </div>
@@ -95,12 +100,24 @@
                     </div>
                 </div>
             @endif
+            @if(session('status'))
+                <div class="row">
+                    <div class="col">
+                        <div class="alert alert-success" role="alert">
+                            {{ session('status') }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endif
             @yield('content')
         </div>
     </main>
 </div>
 <!-- Scripts -->
-<script src="{{ asset('js/app.js') }}" defer></script>
+<script src="{{ asset('js/app.js') }}"></script>
 @stack('scripts')
 </body>
 </html>
