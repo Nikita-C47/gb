@@ -4,15 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Класс, представляющий миграцию создания таблицы с пользователями.
+ */
 class CreateUsersTable extends Migration
 {
     /**
-     * Run the migrations.
+     * Запускает миграцию.
      *
      * @return void
      */
     public function up()
     {
+        // Пользователи
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -25,7 +29,7 @@ class CreateUsersTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Откатывает миграцию.
      *
      * @return void
      */

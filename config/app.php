@@ -236,6 +236,8 @@ return [
     ],
     // Количество выводимых записей по-умолчанию
     'default_rows_count' => 10,
+    // Флаг того, что включены уведомления
     'enable_notifications' => env('ENABLE_NOTIFICATIONS', false),
+    // Email администратора системы
     'admin_email' => env('ADMIN_EMAIL', "")
 ];

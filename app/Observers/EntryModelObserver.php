@@ -6,17 +6,23 @@ use App\Models\Entry;
 use App\Notifications\NewEntryNotification;
 use Illuminate\Support\Facades\Notification;
 
+/**
+ * Класс, представляющий наблюдатель за моделью записи.
+ * @package App\Observers Классы-наблюдатели приложения.
+ */
 class EntryModelObserver
 {
     /**
-     * Handle the entry "created" event.
+     * Обрабатывает создание записи.
      *
-     * @param  \App\Models\Entry  $entry
+     * @param \App\Models\Entry $entry запись.
      * @return void
      */
     public function created(Entry $entry)
     {
+        // Если уведомления включены
         if(config('app.enable_notifications')) {
+            // Отправляем уведомление администратору системы
             Notification::route('mail', config('app.admin_email'))
                 ->notify(new NewEntryNotification($entry->toArray()));
         }

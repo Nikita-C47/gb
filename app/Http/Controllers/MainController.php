@@ -80,7 +80,6 @@ class MainController extends Controller
                 ];
             }
         }
-        // TODO: Добавить уведомления о новых записях
         // Возвращаем редирект на главную с уведомлением
         return redirect()->route('home')->with('alert', $alert);
     }
@@ -94,35 +93,41 @@ class MainController extends Controller
      */
     private function storeEntry(EntryFormRequest $request)
     {
+        // Собираем базовые данные
         $data = [
             'author' => $request->get('author'),
             'content' => $request->get('content')
         ];
-
+        // Если пользователь авторизован
         if(Auth::check()) {
+            // Указываем его
             /** @var \App\User $user */
             $user = Auth::user();
             $data['user_id'] = $user->id;
             $data['author'] = $user->name;
         }
-
+        // Сохраняем запись
         $entry = new Entry($data);
         $entry->save();
-
+        // Если есть прикрепленные изображения
         if($request->hasFile('images')) {
+            // Перебираем их
             /** @var UploadedFile $image */
             foreach ($request->file('images') as $image) {
+                // Сохраняем файл
                 $newImage = new EntryImage([
                     'entry_id' => $entry->id,
                     'name' => Str::random(),
                     'original_name' => $image->getClientOriginalName(),
                     'extension' => $image->getClientOriginalExtension()
                 ]);
+                // Сохраняем файл
                 $newImage->save();
+                // Сохраняем его в файловой системе
                 $newImage->saveInFileSystem($image);
             }
         }
-
+        // Возвращаем данные для уведомления
         return [
             'type' => 'success',
             'text' => 'Ваша запись успешно добавлена'

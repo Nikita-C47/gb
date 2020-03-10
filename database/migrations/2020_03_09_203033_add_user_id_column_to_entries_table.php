@@ -4,15 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Класс, представляющий миграцию добавления столбца пользователя в таблицу записей.
+ */
 class AddUserIdColumnToEntriesTable extends Migration
 {
     /**
-     * Run the migrations.
+     * Запускает миграцию.
      *
      * @return void
      */
     public function up()
     {
+        // Добавляем столбец и внешний ключ
         Schema::table('entries', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable();
 
@@ -21,7 +25,7 @@ class AddUserIdColumnToEntriesTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Откатывает миграцию.
      *
      * @return void
      */

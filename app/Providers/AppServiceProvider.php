@@ -6,10 +6,14 @@ use App\Models\Entry;
 use App\Observers\EntryModelObserver;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Класс, представляющий провайдер сервисов приложения.
+ * @package App\Providers Провайдеры приложения.
+ */
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Регистрирует сервисы приложения.
      *
      * @return void
      */
@@ -19,12 +23,13 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any application services.
+     * Загружает сервисы приложения.
      *
      * @return void
      */
     public function boot()
     {
+        // Регистрируем наблюдатель для модели записи
         Entry::observe(EntryModelObserver::class);
     }
 }

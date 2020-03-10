@@ -56,10 +56,10 @@ return [
         'string' => 'The :attribute must be greater than or equal :value characters.',
         'array' => 'The :attribute must have :value items or more.',
     ],
-    'image' => 'The :attribute must be an image.',
+    'image' => 'Загружать можно только изображения.',
     'in' => 'The selected :attribute is invalid.',
     'in_array' => 'The :attribute field does not exist in :other.',
-    'integer' => 'The :attribute must be an integer.',
+    'integer' => 'Поле должно быть целым числом.',
     'ip' => 'The :attribute must be a valid IP address.',
     'ipv4' => 'The :attribute must be a valid IPv4 address.',
     'ipv6' => 'The :attribute must be a valid IPv6 address.',
@@ -87,7 +87,7 @@ return [
     'min' => [
         'numeric' => 'The :attribute must be at least :min.',
         'file' => 'The :attribute must be at least :min kilobytes.',
-        'string' => 'The :attribute must be at least :min characters.',
+        'string' => 'Минимальное количество символов для этого поля: :min.',
         'array' => 'The :attribute must have at least :min items.',
     ],
     'not_in' => 'The selected :attribute is invalid.',
@@ -133,6 +133,12 @@ return [
         'g-recaptcha-response' => [
             'required' => 'Пожалуйста, подтвердите что Вы не робот.',
         ],
+        'password' => [
+            'confirmed' => 'Пароли не совпадают.'
+        ],
+        'rows_count' => [
+            'min' => 'Число должно быть больше 0.'
+        ]
     ],
 
     /*

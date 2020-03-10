@@ -35,6 +35,11 @@ class Entry extends Model
         return $this->belongsTo('App\User');
     }
 
+    /**
+     * Связь с таблицей изображений.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function images()
     {
         return $this->hasMany('App\Models\EntryImage');

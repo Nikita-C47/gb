@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EntryUpdateFormRequest;
 use App\Models\Entry;
 use App\Models\EntryImage;
-use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -121,9 +120,8 @@ class EntriesController extends Controller
         Gate::authorize('entry', $entry);
         // Удаляем запись
         $entry->delete();
-
+        // Удаляем папку с вложениями
         Storage::disk('public')->deleteDirectory('images/'.$entry->id);
-
         // Отправляем на страницу с записями с уведомлением
         return redirect()->route('my-entries')->with('alert', [
             'type' => 'success',

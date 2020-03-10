@@ -7,27 +7,31 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
+/**
+ * Класс, представляющий уведомление о новой записи в гостевой книге.
+ * @package App\Notifications Уведомления приложения.
+ */
 class NewEntryNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-
-
+    /** @var array $entry данные о записи. */
     private $entry;
 
     /**
-     * Create a new notification instance.
+     * Создает новый экземпляр класса.
      *
-     * @param array $entry
+     * @param array $entry запись.
      */
     public function __construct(array $entry)
     {
+        // Инициализируем поле
         $this->entry = $entry;
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Получает каналы доставки уведомления.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable уведомляемый объект.
      * @return array
      */
     public function via($notifiable)
@@ -36,13 +40,14 @@ class NewEntryNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the mail representation of the notification.
+     * Получает представление уведомления в виде письма.
      *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @param mixed $notifiable уведомляемый объект.
+     * @return \Illuminate\Notifications\Messages\MailMessage объект сообщения для отправки.
      */
     public function toMail($notifiable)
     {
+        // Собираем сообщение
         return (new MailMessage)
                     ->subject('Новая запись в гостевой книге')
                     ->greeting('Здравствуйте! В гостевой книге появилась новая запись.')
@@ -53,10 +58,10 @@ class NewEntryNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the array representation of the notification.
+     * Получает представление уведомления в виде массива.
      *
-     * @param  mixed  $notifiable
-     * @return array
+     * @param mixed $notifiable уведомляемый объект.
+     * @return array массив.
      */
     public function toArray($notifiable)
     {

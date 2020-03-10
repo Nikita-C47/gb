@@ -4,15 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/**
+ * Класс, представляющий миграцию создания таблицы с изображениями, прикрепленными к записи.
+ */
 class CreateEntryImagesTable extends Migration
 {
     /**
-     * Run the migrations.
+     * Запускает миграцию.
      *
      * @return void
      */
     public function up()
     {
+        // Таблица с изображениями
         Schema::create('entry_images', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('entry_id');
@@ -26,7 +30,7 @@ class CreateEntryImagesTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Откатывает миграцию.
      *
      * @return void
      */
